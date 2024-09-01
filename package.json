@@ -1,6 +1,6 @@
 {
-  "name": "wm07countdown_timer",
-  "version": "1.0.0",
+  "name": "wishcountdown_timer",
+  "version": "1.1.0",
   "main": "index.js",
   "type": "module",
   "bin": "index.js",

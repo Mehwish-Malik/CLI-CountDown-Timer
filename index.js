@@ -1,29 +1,41 @@
 #! /usr/bin/env node
+// Step 1
+import { input } from "@inquirer/prompts";
+import { number } from "@inquirer/prompts";
 import { differenceInSeconds } from "date-fns/differenceInSeconds";
-function* countDownTimer(second) {
-    while (second > 0) {
-        yield second;
-        second--;
+const name = await input({
+    message: "Enter Your Name"
+});
+console.log(name);
+const answer = await number({
+    message: "Enter The Amount Of Seconds To Start Counting",
+    validate: (input) => {
+        if (isNaN(input)) {
+            return "please enter valid Number";
+        }
+        else if (input > 60) {
+            return "Seconds must be in 60";
+        }
+        else {
+            return true;
+        }
     }
+});
+console.log(answer);
+let inPut = answer;
+function countDownTimer(second) {
+    const intTime = new Date().setSeconds(new Date().getSeconds() + second);
+    const intervalTime = new Date(intTime);
+    setInterval((() => {
+        const currentTime = new Date();
+        const timeDiff = differenceInSeconds(intervalTime, currentTime);
+        if (timeDiff <= 0) {
+            console.log("Timer has Expired!!");
+            process.exit();
+        }
+        const min = Math.floor((timeDiff % (3600 * 24)) / 3600);
+        const sec = Math.floor(timeDiff % 60);
+        console.log(`${min.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`);
+    }), 1000);
 }
-// step 2(Initialization of counter)
-let timerIterator = countDownTimer(15);
-// function to create count down timer
-function displayCountDown() {
-    // value below 10
-    let result = timerIterator.next();
-    if (!result.done) {
-        const now = new Date();
-        //    calculate minutes in time
-        const countDownTime = new Date(now.getTime() + (result.value * 1000));
-        // Calculate remaining seconds in time
-        const remainingSeconds = differenceInSeconds(countDownTime, now);
-        console.log(`Remaining Seconds:${remainingSeconds}`);
-        setTimeout(displayCountDown, 1000);
-    }
-    else {
-        // display result countDown Complete
-        console.log("CountDown Completed!!");
-    }
-}
-displayCountDown();
+countDownTimer(inPut);
